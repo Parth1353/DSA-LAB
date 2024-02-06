@@ -70,8 +70,6 @@ public:
             cout << "No records found with CGPI greater than " << threshold << endl;
         }
     }
-
-    // Function to insert a new student record at a specified position in the linked list
     void insertAtPosition(Student* new_student, int position) {
         if (position <= 0) {
             cout << "Invalid position." << endl;
