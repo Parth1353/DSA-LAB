@@ -35,4 +35,4 @@ Feel free to explore each directory to find programs of interest.
 To use these programs, simply clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/dsa-lab-programs.git
+git clone https://github.com/Parth1353/DSA-LAB.git
