@@ -1,104 +1,108 @@
 #include <iostream>
-
 using namespace std;
-
-struct Node {
-    int data;
-    Node* next;
-};
-
-class LinkedList {
-private:
-    Node* head; 
-
+class Node
+{
 public:
-   
-    LinkedList() {
-        head = nullptr;
-    } 
-    void insert(int value) {
-     
-        Node* newNode = new Node;
-        newNode->data = value;
-        newNode->next = head; 
-        head = newNode; 
+    int data;
+    Node *next;
+
+    Node(int data)
+    {
+        this->data = data;
+        this->next = NULL;
+    };
+    ~Node()
+    {
+        int value = this->data;
+        if (this->next != NULL)
+        {
+            delete next;
+            this->next = NULL;
+        }
+        cout << "DELETION DONE" << endl;
+    };
+};
+void printList(Node *&head)
+{
+    if (head == NULL)
+    {
+        cout << "EMPTY" << endl;
+        return;
     }
-
-    void remove(int value) {
-        
-        if (head == nullptr)
-            return;
-
-
-        if (head->data == value) {
-            Node* temp = head;
-            head = head->next;
-            return;
-        }
-
-      
-        Node* current = head;
-        Node* previous = nullptr;
-        while (current != nullptr && current->data != value) {
-            previous = current;
-            current = current->next;
-        }
-
-       
-        if (current != nullptr) {
-            previous->next = current->next;
-            delete current;
-        }
-    }
-
-   
-    void display() {
-        Node* temp = head;
-        while (temp != nullptr) {
-            cout << temp->data << " ";
-            temp = temp->next;
-        }
-        cout << endl;
-    }
-
-   
-    ~LinkedList() {
-        Node* temp;
-        while (head != nullptr) {
-            temp = head;
-            head = head->next;
-            delete temp;
-        }
+    Node *temp = head;
+    while (temp->next != NULL)
+    {
+        cout << "data value" << temp->data << endl;
+        temp = temp->next;
     }
 };
-
-int main() {
-    LinkedList list;
-
-   
-    int numElements;
-    cout << "Enter the number of elements to insert: ";
-    cin >> numElements;
-
-    
-    cout << "Enter the elements to insert:\n";
-    for (int i = 0; i < numElements; ++i) {
-        int value;
-        cin >> value;
-        list.insert(value);
+void insertAtHead(Node *&head, Node *&tail, int d)
+{
+    if (head == NULL)
+    {
+        Node *temp = new Node(d);
+        temp = head;
+        return;
     }
-
-    cout << "Initial list: ";
-    list.display();
-
-   
-    int deleteValue;
-    cout << "Enter the element to delete: ";
-    cin >> deleteValue;
-    list.remove(deleteValue);
-
-    cout << "List after deleting " << deleteValue << ": ";
-    list.display();
-
-    return 0;
-}
+    Node *temp = new Node(d);
+    temp->next = head;
+    head = temp;
+};
+void insertAtTail(Node *&tail, Node *&head, int d)
+{
+    if (head == NULL)
+    {
+        Node *temp = new Node(d);
+        temp = head;
+        return;
+    }
+    Node *temp = new Node(d);
+    tail->next = temp;
+    tail = temp;
+};
+void insertAtPosition(Node *&tail, Node *&head, int position, int d)
+{
+    if (position == 1)
+    {
+        insertAtHead(head, tail, d);
+        return;
+    }
+    Node *temp = head;
+    int i = 0;
+    while (i < position - 1)
+    {
+        temp = temp->next;
+        i++;
+    }
+    if (temp->next == NULL)
+    {
+        insertAtTail(tail, head, d);
+        return;
+    }
+    Node *newNode = new Node(d);
+    newNode->next = temp->next;
+    temp->next = newNode;
+};
+void deleteNode(Node *&head, int position)
+{
+    if (position == 1)
+    {
+        Node *temp = head;
+        head = head->next;
+        temp->next = NULL;
+        delete temp;
+        return;
+    }
+    Node *current = head;
+    Node *previous = NULL;
+    int j = 0;
+    while (j <= position)
+    {
+        previous = current;
+        current = current->next;
+        j++;
+    }
+    previous->next = current->next;
+    current->next = NULL;
+    delete current;
+};
