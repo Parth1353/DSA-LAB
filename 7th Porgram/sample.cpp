@@ -1,138 +1,110 @@
-// #include <iostream>
-// using namespace std;
-// class Queue {
-    
-//     int* arr;
-//     int qfront;
-//     int rear; 
-//     int size;
-    
-// public:
-//     Queue() {
-//         size = 100001;
-//         arr = new int[size];
-//         qfront = 0;
-//         rear = 0;
-//     }
-
-//     bool isEmpty() {
-//         if(qfront == rear) {
-//             return true;
-//         }
-//         else
-//         {
-//             return false;
-//         }
-//     }
-
-//     void enqueue(int data) {
-//         if(rear == size)
-//             cout << "Queue is Full" << endl;
-//         else
-//         {
-//             arr[rear] = data;
-//             rear++;
-//         }
-//     }
-
-//     int dequeue() {
-//         if(qfront == rear) {
-//             return -1;
-//         }
-//         else
-//         {	int ans = arr[qfront];
-//             arr[qfront] = -1;
-//             qfront++;
-//             if(qfront==rear){
-//                 qfront = 0;
-//                 rear = 0;
-//             }
-//          return ans;
-//         }
-//     }
-// int front() {
-//         if(qfront == rear) {
-//             return -1;
-//         }
-//         else
-//         {
-//             return arr[qfront];
-//         }
-//     }
-// };     v#include <iostream>
-using namespace std;
 #include <iostream>
-class Node {
-public:
-    int data;
-    Node* next;
+#include <vector>
+using namespace std;
 
-    Node(int data) {
-        this->data = data;
-        this->next = nullptr;
+class CustomQueue{
+public: 
+    int front_index;      
+    int rear_index;    
+    vector<int> elements;
+
+    CustomQueue(int size){
+        front_index = 0;
+        rear_index = 0;
+        vector<int> v(size);
+        elements = v;
+    }
+
+    void add(int val){
+        if(rear_index == elements.size()){
+            cout<<"Queue is FULL!!!"<<endl;
+            return;
+        }
+        elements[rear_index] = val;
+        rear_index++;
+    }
+
+    void remove(){
+        if(front_index == rear_index){   
+            cout<<"Queue is EMPTY!!!"<<endl;
+            return;
+        }
+        front_index++;
+    }
+
+    int peekFront(){
+        if(front_index == rear_index){   
+            cout<<"Queue is EMPTY!!!"<<endl;
+            return -1;
+        }
+        return elements[front_index];
+    }
+
+    int peekBack(){
+        if(front_index == rear_index){  
+            cout<<"Queue is EMPTY!!!"<<endl;
+            return -1;
+        }
+        return elements[rear_index-1];
+    }
+
+    int getSize(){
+        return rear_index - front_index;
+    }
+
+    bool isEmpty(){
+        return rear_index - front_index == 0;
+    }
+
+    void display(){
+        for(int i=front_index; i<rear_index; i++){
+            cout<<elements[i]<<" ";
+        }
+        cout<<endl;
     }
 };
 
-class Queue {
-private:
-    Node* qfront;
-    Node* rear;
+int main(){
+    CustomQueue myQueue(7);   
+    int choice;
 
-public:
-    Queue() {
-        qfront = nullptr;
-        rear = nullptr;
-    }
-
-    bool isEmpty() {
-        return (qfront == nullptr);
-    }
-
-    void enqueue(int data) {
-        Node* newNode = new Node(data);
-
-        if (isEmpty()) {
-            qfront = newNode;
-            rear = newNode;
-        } else {
-            rear->next = newNode;
-            rear = newNode;
+    do{
+        cout<<"Enter your choice : ";
+        cin>>choice;
+        switch (choice) {
+        case 1:
+            cout<<"Push Done"<<endl;
+            myQueue.add(10);
+            myQueue.add(20);
+            myQueue.add(30);
+            myQueue.add(40);
+            myQueue.add(50);
+            myQueue.add(60);
+            myQueue.add(70);
+            break;
+        case 2:
+            cout<<"Pop Done"<<endl;
+            myQueue.remove();
+            break;
+        case 3:
+            cout<<"Front element is : "<<myQueue.peekFront()<<endl;
+            break;
+        case 4:
+            cout<<"Back element is : "<<myQueue.peekBack()<<endl;
+            break;
+        case 5:
+            cout<<"Size is : "<<myQueue.getSize()<<endl;
+            break;
+        case 6:      
+            cout<<"Empty or not : "<<myQueue.isEmpty()<<endl;
+            break;
+        case 7:
+            myQueue.display();
+            break;
+        default:
+            cout << "Invalid choice" <<endl;
+            return -1; 
         }
-    }
-
-    int dequeue() {
-        if (isEmpty()) {
-            cout << "Queue is Empty" << endl;
-            return -1;
-        } else {
-            int data = qfront->data;
-            Node* temp = qfront;
-            qfront = qfront->next;
-            delete temp;
-            return data;
-        }
-    }
-
-    int front() {
-        if (isEmpty()) {
-            cout << "Queue is Empty" << endl;
-            return -1;
-        } else {
-            return qfront->data;
-        }
-    }
-};
-
-int main() {
-    Queue myQueue;
-    myQueue.enqueue(10);
-    myQueue.enqueue(20);
-    myQueue.enqueue(30);
-
-    cout << "Front element: " << myQueue.front() << endl;
-
-    cout << "Dequeue: " << myQueue.dequeue() << endl;
-    cout << "Front element after dequeue: " << myQueue.front() << endl;
-
+    } while(choice != 7);
     return 0;
 }
