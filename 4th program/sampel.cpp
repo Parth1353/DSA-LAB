@@ -94,7 +94,7 @@ public:
         }
     }
 
-    // Function to get the head of the linked list
+    
     Student* getHead() {
         return head;
     }
@@ -103,7 +103,7 @@ public:
 int main() {
     LinkedList records;
 
-    // Input records of five students
+ 
     for (int i = 0; i < 5; ++i) {
         string roll_no, name;
         float cgpi;
@@ -123,14 +123,13 @@ int main() {
         records.insert(new_student);
     }
 
-    // Display records of students with CGPI greater than a threshold
     float threshold;
     cout << "\nEnter the CGPI threshold: ";
     cin >> threshold;
     cout << "Students with CGPI greater than " << threshold << ":" << endl;
     records.displayRecordsWithCGPI(threshold);
 
-    // Insert a new record at a specified position
+ 
     int position;
     cout << "\nEnter the position to insert a new record: ";
     cin >> position;
@@ -152,7 +151,7 @@ int main() {
     Student* new_student = new Student(roll_no, name, cgpi, semester);
     records.insertAtPosition(new_student, position);
 
-    // Display final records
+   
     cout << "\nFinal records after insertion:" << endl;
     Student* current = records.getHead();
     while (current != nullptr) {
@@ -160,7 +159,7 @@ int main() {
         current = current->next;
     }
 
-    // Free dynamically allocated memory
+  
     current = records.getHead();
     while (current != nullptr) {
         Student* temp = current;

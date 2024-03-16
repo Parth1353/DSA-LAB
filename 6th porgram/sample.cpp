@@ -1,39 +1,65 @@
 #include <iostream>
 #include <stack>
+#include <cctype>
+#include <cmath>
 using namespace std;
 
-int cal(string s) {
-    stack<int> st;
-    for (int i = 0; i < s.length(); i++) {
-        if (s[i] >= '0' && s[i] <= '9') {
-            st.push(s[i] - '0');
-        } else {
-            int a = st.top();
-            st.pop();
-            int b = st.top();
-            st.pop();
-            if (s[i] == '+') {
-                st.push(b + a);
-            } else if (s[i] == '-') {
-                st.push(b - a);
-            } else if (s[i] == '*') {
-                st.push(b * a);
-            } else if (s[i] == '/') {
-                st.push(b / a);
+void evaluatePostfixExpression(string &postfixExpr, stack<int>& operandStack) {
+    string temp = "";
+    for (int index = 0; index < postfixExpr.size(); index++) {
+        char currentChar = postfixExpr[index];
+        if (currentChar == '$') {
+            int operand2 = operandStack.top();
+            operandStack.pop();
+            int operand1 = operandStack.top();
+            operandStack.pop();
+            int result = pow(operand1, operand2);
+            operandStack.push(result);
+        } else if (currentChar == '+') {
+            int operand2 = operandStack.top();
+            operandStack.pop();
+            int operand1 = operandStack.top();
+            operandStack.pop();
+            int result = operand1 + operand2;
+            operandStack.push(result);
+        } else if (currentChar == '-') {
+            int operand2 = operandStack.top();
+            operandStack.pop();
+            int operand1 = operandStack.top();
+            operandStack.pop();
+            int result = operand1 - operand2;
+            operandStack.push(result);
+        } else if (currentChar == '*') {
+            int operand2 = operandStack.top();
+            operandStack.pop();
+            int operand1 = operandStack.top();
+            operandStack.pop();
+            int result = operand1 * operand2;
+            operandStack.push(result);
+        } else if (currentChar == '/') {
+            int operand2 = operandStack.top();
+            operandStack.pop();
+            int operand1 = operandStack.top();
+            operandStack.pop();
+            int result = operand1 / operand2;
+            operandStack.push(result);
+        } else if (isdigit(currentChar)) {
+            temp = "";
+            while (isdigit(postfixExpr[index])) {
+                temp += postfixExpr[index];
+                index++;
             }
-            else
-            {
-                cout<<"wrong input"<<endl;
-                return -1;
-            }
+            index--; 
+            int operand = stoi(temp);
+            operandStack.push(operand);
         }
     }
-    return st.top();
 }
 
 int main() {
-    string s;
-    getline(cin, s);
-    cout << cal(s);
+    string postfixExpr = "2 3$5 2 2 $*+12 6/-";
+    stack<int> operandStack;
+    evaluatePostfixExpression(postfixExpr, operandStack);
+    cout << operandStack.top();
     return 0;
 }
