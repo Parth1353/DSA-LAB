@@ -1,75 +1,136 @@
-#include <bits/stdc++.h>
-
+#include <iostream>
 using namespace std;
- 
 
-
-struct Node {
-
+class Node {
+public:
     int data;
-
-    struct Node *left, *right;
+    Node *left;
+    Node *right;
+    Node(int data) : data(data), left(nullptr), right(nullptr) {}
 };
- 
-Node* newNode(int data)
-{
 
-    Node* temp = new Node;
+Node *insert(Node *&root, int data) {
+    if (root == NULL) {
+        root = new Node(data);
+    } else {
+        if (data < root->data) {
+            root->left = insert(root->left, data);
+        } else {
+            root->right = insert(root->right, data);
+        }
+    }
+    return root;
+}
 
-    temp->data = data;
+void input(Node *&root, bool &flag) {
+    int data;
+    cin >> data;
 
-    temp->left = temp->right = NULL;
+    while (data != -1) {
+        root = insert(root, data);
+        cin >> data;
+    }
+    if (data == -1) {
+        flag = false;
+    }
+}
 
+Node *mini(Node *root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    Node *temp = root;
+    while (temp->left != NULL) {
+        temp = temp->left;
+    }
     return temp;
 }
- 
-// Given a binary tree, print its nodes in inorder
 
-void printInorder(struct Node* node)
-{
-
-    if (node == NULL)
-
-        return;
- 
-
-    // First recur on left child
-
-    printInorder(node->left);
- 
-
-    // Then print the data of node
-
-    cout << node->data << " ";
- 
-
-    // Now recur on right child
-
-    printInorder(node->right);
+Node *maxi(Node *root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    Node *temp = root;
+    while (temp->right != NULL) {
+        temp = temp->right;
+    }
+    return temp;
 }
- 
-// Driver code
 
-int main()
-{
+Node *deleteNode(Node *&root, int val) {
+    if (root == NULL) {
+        return NULL;
+    }
+    if (val == root->data) {
+    
+        if (root->left == NULL && root->right == NULL) {
+            delete root;
+            return NULL;
+        }
 
-    struct Node* root = newNode(1);
+        if (root->left != NULL && root->right == NULL) {
+            Node *left = root->left;
+            delete root;
+            return left;
+        }
+        if (root->left == NULL && root->right != NULL) {
+            Node *right = root->right;
+            delete root;
+            return right;
+        }
+        if (root->left != NULL && root->right != NULL) {
+            Node *minNode = mini(root->right);
+            root->data = minNode->data;
+            deleteNode(root->right, minNode->data);
+            return root;
+        }
+    } else if (val > root->data) {
+        root->right = deleteNode(root->right, val);
+    } else {
+        root->left = deleteNode(root->left, val);
+    }
+    return root;
+}
 
-    root->left = newNode(2);
+void inorder(Node *root) {
+    if (root == NULL) {
+        return;
+    }
+    inorder(root->left);
+    cout << root->data << " ";
+    inorder(root->right);
+}
 
-    root->right = newNode(3);
+void preorder(Node *root) {
+    if (root == NULL) {
+        return;
+    }
+    cout << root->data << " ";
+    preorder(root->left);
+    preorder(root->right);
+}
 
-    root->left->left = newNode(4);
+void postorder(Node *root) {
+    if (root == NULL) {
+        return;
+    }
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->data << " ";
+}
 
-    root->left->right = newNode(5);
- 
+int main() {
+    Node *root = nullptr;
+    bool flag = true;
+    while (flag) {
+        input(root, flag);
+    }
+    inorder(root);
+    cout << endl;
+    preorder(root);
+    cout << endl;
+    postorder(root);
+    cout << endl;
 
-    // Function call
-
-    cout << "Inorder traversal of binary tree is \n";
-
-    printInorder(root);
- 
-
-    return 0;
+    return 0; // Added return statement
 }
