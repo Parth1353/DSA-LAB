@@ -23,7 +23,7 @@ Node *insert(Node *&root, int data) {
 }
 
 void input(Node *&root, bool &flag) {
-    int data;
+    int data; 
     cin >> data;
 
     while (data != -1) {
