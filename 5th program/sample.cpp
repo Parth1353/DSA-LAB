@@ -1,22 +1,14 @@
 #include <iostream>
 using namespace std;
 
-class Node{
-public:
+struct Node {
     int num;
     Node* next;
-    Node(){
-
-    }
-    Node(int num){
-        this->num = num;
-        this->next = NULL;
-    }
 };
 
-int getLength(Node* head){
+int getLength(Node* head) {
     int count = 0;
-    while(head != NULL){
+    while (head != nullptr) {
         head = head->next;
         count++;
     }
@@ -24,74 +16,135 @@ int getLength(Node* head){
 }
 
 void insertNode(Node*& head, int position, int length) {
-    Node* newNode = new Node(8);
+    Node* newNode = new Node;
+    if (newNode == nullptr) {
+        cout << "Memory allocation failed" << endl;
+        return;
+    }
+    cout << "Enter the number for the new node: ";
+    cin >> newNode->num;
+    newNode->next = nullptr;
+
     Node* temp = head;
-    if (temp == NULL) {
+    if (temp == nullptr) {
         head = newNode;
         return;
     }
+
     if (position == length) {
-        while (temp->next != NULL) {
+        while (temp->next != nullptr) {
             temp = temp->next;
         }
         temp->next = newNode;
-        return;
-    }
-    else {
+    } else {
         int count = 1;
-        while (count < position && temp->next != NULL) {
+        while (count < position && temp->next != nullptr) {
             temp = temp->next;
             count++;
         }
-        Node* previous = temp->next;
+        newNode->next = temp->next;
         temp->next = newNode;
-        newNode->next = previous;
-        return;
     }
 }
 
-void deleteNode(Node* head, int position){
-    if(head == NULL){
+void deleteNode(Node*& head, int position) {
+    if (head == nullptr) {
         cout << "Linked list is empty" << endl;
         return;
     }
-    int count = 1;
-    while(head != NULL){
-        if(count == position){
-            Node* nextNode = head->next;
-            head->next = nextNode->next;
-            return;
-        }
-        else{
-            head = head->next;
-            count++;
-        }
+
+    if (position == 1) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        return;
     }
+
+    Node* current = head;
+    int count = 1;
+    while (current != nullptr && count < position - 1) {
+        current = current->next;
+        count++;
+    }
+
+    if (current == nullptr || current->next == nullptr) {
+        cout << "Invalid position" << endl;
+        return;
+    }
+
+    Node* nodeToDelete = current->next;
+    current->next = nodeToDelete->next;
+    delete nodeToDelete;
 }
 
-int main(){
-    Node* current = new Node(3);
-    Node* current1 = new Node(4);
-    Node* current2 = new Node(5);
-    Node* current3 = new Node(6);
-    Node* current4 = new Node(8);
-    Node* answer = current;
-    answer->next = current1;
-    answer = answer->next;
-    answer->next = current2;
-    answer = answer->next;
-    answer->next = current3;
-    answer = answer->next;
-    answer->next = current4;
-    answer = answer->next;
-    Node* head = current;
-    int length = getLength(head);
-    int position;
-    insertNode(head, 4, length);
-    // insert(head,3);
-    deleteNode(head, 5);
-    while(current != NULL){
-        cout << current->num << endl;
-        current = current->next;
+void displayList(Node* head) {
+    if (head == nullptr) {
+        cout << "Linked list is empty" << endl;
+        return;
     }
+
+    cout << "Linked list contents:" << endl;
+    while (head != nullptr) {
+        cout << head->num << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+int main() {
+    Node* head = nullptr;
+
+    int numNodes;
+    cout << "Enter the number of nodes to create: ";
+    cin >> numNodes;
+
+    for (int i = 0; i < numNodes; ++i) {
+        int value;
+        cout << "Enter the value for node " << i + 1 << ": ";
+        cin >> value;
+
+        Node* newNode = new Node;
+        if (newNode == nullptr) {
+            cout << "Memory allocation failed" << endl;
+            break;
+        }
+
+        newNode->num = value;
+        newNode->next = nullptr;
+
+        if (head == nullptr) {
+            head = newNode;
+        } else {
+            Node* current = head;
+            while (current->next != nullptr) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    }
+
+    displayList(head);
+
+    int position;
+    cout << "Enter the position to insert a new node: ";
+    cin >> position;
+
+    int length = getLength(head);
+    insertNode(head, position, length);
+
+    displayList(head);
+
+    cout << "Enter the position to delete a node: ";
+    cin >> position;
+
+    deleteNode(head, position);
+
+    displayList(head);
+    while (head != nullptr) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    return 0;
 }

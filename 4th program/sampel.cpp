@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 using namespace std;
 
 class Student {
@@ -8,8 +9,6 @@ public:
     float cgpi;
     int semester;
     Student* next;
-
-    
     Student(string roll_no, string name, float cgpi, int semester) {
         this->roll_no = roll_no;
         this->name = name;
@@ -17,6 +16,7 @@ public:
         this->semester = semester;
         this->next = nullptr;
     }
+
     void display() {
         cout << "Roll No.: " << roll_no << endl;
         cout << "Name: " << name << endl;
@@ -30,6 +30,7 @@ private:
     Student* head;
 
 public:
+ 
     LinkedList() {
         head = nullptr;
     }
@@ -44,6 +45,7 @@ public:
             current->next = new_student;
         }
     }
+
     void displayRecords() {
         if (head == nullptr) {
             cout << "No records found." << endl;
@@ -70,6 +72,7 @@ public:
             cout << "No records found with CGPI greater than " << threshold << endl;
         }
     }
+
     void insertAtPosition(Student* new_student, int position) {
         if (position <= 0) {
             cout << "Invalid position." << endl;
@@ -93,17 +96,21 @@ public:
             }
         }
     }
-
-    
     Student* getHead() {
         return head;
+    }
+    ~LinkedList() {
+        Student* current = head;
+        while (current != nullptr) {
+            Student* temp = current;
+            current = current->next;
+            delete temp;
+        }
     }
 };
 
 int main() {
     LinkedList records;
-
- 
     for (int i = 0; i < 5; ++i) {
         string roll_no, name;
         float cgpi;
@@ -122,50 +129,34 @@ int main() {
         Student* new_student = new Student(roll_no, name, cgpi, semester);
         records.insert(new_student);
     }
-
     float threshold;
     cout << "\nEnter the CGPI threshold: ";
     cin >> threshold;
     cout << "Students with CGPI greater than " << threshold << ":" << endl;
     records.displayRecordsWithCGPI(threshold);
-
- 
     int position;
     cout << "\nEnter the position to insert a new record: ";
     cin >> position;
 
-    string roll_no, name;
-    float cgpi;
-    int semester;
+    string new_roll_no, new_name;
+    float new_cgpi;
+    int new_semester;
 
     cout << "Enter details of new student:" << endl;
     cout << "Roll No.: ";
-    cin >> roll_no;
+    cin >> new_roll_no;
     cout << "Name: ";
-    cin >> name;
+    cin >> new_name;
     cout << "CGPI: ";
-    cin >> cgpi;
+    cin >> new_cgpi;
     cout << "Semester: ";
-    cin >> semester;
+    cin >> new_semester;
 
-    Student* new_student = new Student(roll_no, name, cgpi, semester);
+    Student* new_student = new Student(new_roll_no, new_name, new_cgpi, new_semester);
     records.insertAtPosition(new_student, position);
 
-   
     cout << "\nFinal records after insertion:" << endl;
-    Student* current = records.getHead();
-    while (current != nullptr) {
-        current->display();
-        current = current->next;
-    }
-
-  
-    current = records.getHead();
-    while (current != nullptr) {
-        Student* temp = current;
-        current = current->next;
-        delete temp;
-    }
+    records.displayRecords();
 
     return 0;
 }
