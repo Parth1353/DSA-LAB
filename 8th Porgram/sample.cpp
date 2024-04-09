@@ -1,136 +1,76 @@
 #include <iostream>
 using namespace std;
 
-class Node {
+class TreeNode {
 public:
     int data;
-    Node *left;
-    Node *right;
-    Node(int data) : data(data), left(nullptr), right(nullptr) {}
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int value) : data(value), left(nullptr), right(nullptr) {}
 };
 
-Node *insert(Node *&root, int data) {
-    if (root == NULL) {
-        root = new Node(data);
-    } else {
-        if (data < root->data) {
-            root->left = insert(root->left, data);
+class BinaryTree {
+private:
+    TreeNode* root;
+
+public:
+    BinaryTree() : root(nullptr) {}
+
+    void insert(int value) {
+        root = insertRecursive(root, value);
+    }
+
+    TreeNode* insertRecursive(TreeNode* node, int value) {
+        if (node == nullptr) {
+            return new TreeNode(value);
+        }
+
+        if (value < node->data) {
+            node->left = insertRecursive(node->left, value);
         } else {
-            root->right = insert(root->right, data);
-        }
-    }
-    return root;
-}
-
-void input(Node *&root, bool &flag) {
-    int data; 
-    cin >> data;
-
-    while (data != -1) {
-        root = insert(root, data);
-        cin >> data;
-    }
-    if (data == -1) {
-        flag = false;
-    }
-}
-
-Node *mini(Node *root) {
-    if (root == NULL) {
-        return NULL;
-    }
-    Node *temp = root;
-    while (temp->left != NULL) {
-        temp = temp->left;
-    }
-    return temp;
-}
-
-Node *maxi(Node *root) {
-    if (root == NULL) {
-        return NULL;
-    }
-    Node *temp = root;
-    while (temp->right != NULL) {
-        temp = temp->right;
-    }
-    return temp;
-}
-
-Node *deleteNode(Node *&root, int val) {
-    if (root == NULL) {
-        return NULL;
-    }
-    if (val == root->data) {
-    
-        if (root->left == NULL && root->right == NULL) {
-            delete root;
-            return NULL;
+            node->right = insertRecursive(node->right, value);
         }
 
-        if (root->left != NULL && root->right == NULL) {
-            Node *left = root->left;
-            delete root;
-            return left;
-        }
-        if (root->left == NULL && root->right != NULL) {
-            Node *right = root->right;
-            delete root;
-            return right;
-        }
-        if (root->left != NULL && root->right != NULL) {
-            Node *minNode = mini(root->right);
-            root->data = minNode->data;
-            deleteNode(root->right, minNode->data);
-            return root;
-        }
-    } else if (val > root->data) {
-        root->right = deleteNode(root->right, val);
-    } else {
-        root->left = deleteNode(root->left, val);
+        return node;
     }
-    return root;
-}
 
-void inorder(Node *root) {
-    if (root == NULL) {
-        return;
+    void inorderTraversal() {
+        cout << "Inorder Traversal: ";
+        inorderRecursive(root);
+        cout << endl;
     }
-    inorder(root->left);
-    cout << root->data << " ";
-    inorder(root->right);
-}
 
-void preorder(Node *root) {
-    if (root == NULL) {
-        return;
-    }
-    cout << root->data << " ";
-    preorder(root->left);
-    preorder(root->right);
-}
+    void inorderRecursive(TreeNode* node) {
+        if (node == nullptr) {
+            return;
+        }
 
-void postorder(Node *root) {
-    if (root == NULL) {
-        return;
+        inorderRecursive(node->left);
+        cout << node->data << " ";
+        inorderRecursive(node->right);
     }
-    postorder(root->left);
-    postorder(root->right);
-    cout << root->data << " ";
-}
+};
 
 int main() {
-    Node *root = nullptr;
-    bool flag = true;
-    while (flag) {
-        input(root, flag);
-    }
-    inorder(root);
-    cout << endl;
-    preorder(root);
-    cout << endl;
-    postorder(root);
-    cout << endl;
+    BinaryTree tree;
 
-    return 0; 
+    cout << "Binary Tree Implementation" << endl;
+    cout << "Enter elements to insert into the binary tree (-1 to stop):" << endl;
+
+    int value;
+    while (true) {
+        cout << "Enter value: ";
+        cin >> value;
+
+        if (value == -1) {
+            break;
+        }
+
+        tree.insert(value);
+    }
+
+    tree.inorderTraversal();
+
+    return 0;
 }
