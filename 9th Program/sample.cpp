@@ -1,123 +1,181 @@
 #include <iostream>
 using namespace std;
 
-class TreeNode {
-public:
+// Node structure for BST
+struct TreeNode {
     int data;
     TreeNode* left;
     TreeNode* right;
-
-    TreeNode(int value) : data(value), left(nullptr), right(nullptr) {}
 };
 
-class BST {
+
+class BinarySearchTree {
 private:
     TreeNode* root;
 
-public:
-    BST() : root(nullptr) {}
+    
+    TreeNode* createNode(int data) {
+        TreeNode* newNode = new TreeNode;
+        newNode->data = data;
+        newNode->left = newNode->right = nullptr;
+        return newNode;
+    }
 
-    TreeNode* insert(TreeNode* node, int value) {
-        if (node == nullptr) {
-            return new TreeNode(value);
+   
+    TreeNode* insertRec(TreeNode* root, int data) {
+        if (root == nullptr) {
+            return createNode(data);
         }
 
-        if (value < node->data) {
-            node->left = insert(node->left, value);
+        if (data < root->data) {
+            root->left = insertRec(root->left, data);
+        } else if (data > root->data) {
+            root->right = insertRec(root->right, data);
+        }
+
+        return root;
+    }
+
+    TreeNode* minValueNode(TreeNode* node) {
+        TreeNode* current = node;
+
+        while (current && current->left != nullptr) {
+            current = current->left;
+        }
+
+        return current;
+    }
+    TreeNode* deleteNodeRec(TreeNode* root, int data) {
+        if (root == nullptr) {
+            return root;
+        }
+
+        if (data < root->data) {
+            root->left = deleteNodeRec(root->left, data);
+        } else if (data > root->data) {
+            root->right = deleteNodeRec(root->right, data);
         } else {
-            node->right = insert(node->right, value);
-        }
-
-        return node;
-    }
-
-    void insert(int value) {
-        root = insert(root, value);
-    }
-
-    TreeNode* findMin(TreeNode* node) {
-        while (node->left != nullptr) {
-            node = node->left;
-        }
-        return node;
-    }
-
-    TreeNode* remove(TreeNode* node, int value) {
-        if (node == nullptr) {
-            return nullptr;
-        }
-
-        if (value < node->data) {
-            node->left = remove(node->left, value);
-        } else if (value > node->data) {
-            node->right = remove(node->right, value);
-        } else {
-            if (node->left == nullptr && node->right == nullptr) {
-                delete node;
-                return nullptr;
-            } else if (node->left == nullptr) {
-                TreeNode* temp = node->right;
-                delete node;
+            if (root->left == nullptr) {
+                TreeNode* temp = root->right;
+                delete root;
                 return temp;
-            } else if (node->right == nullptr) {
-                TreeNode* temp = node->left;
-                delete node;
+            } else if (root->right == nullptr) {
+                TreeNode* temp = root->left;
+                delete root;
                 return temp;
-            } else {
-                TreeNode* minRight = findMin(node->right);
-                node->data = minRight->data;
-                node->right = remove(node->right, minRight->data);
             }
+
+            TreeNode* temp = minValueNode(root->right);
+            root->data = temp->data;
+            root->right = deleteNodeRec(root->right, temp->data);
         }
-        return node;
+
+        return root;
+    }
+    void inorderRec(TreeNode* root) {
+        if (root == nullptr) return;
+        inorderRec(root->left);
+        cout << root->data << " ";
+        inorderRec(root->right);
     }
 
-    void remove(int value) {
-        root = remove(root, value);
+    void preorderRec(TreeNode* root) {
+        if (root == nullptr) return;
+        cout << root->data << " ";
+        preorderRec(root->left);
+        preorderRec(root->right);
+    }
+    void postorderRec(TreeNode* root) {
+        if (root == nullptr) return;
+        postorderRec(root->left);
+        postorderRec(root->right);
+        cout << root->data << " ";
     }
 
-    void inorderTraversal(TreeNode* node) {
-        if (node == nullptr) {
+public:
+
+    BinarySearchTree() {
+        root = nullptr;
+    }
+
+    void insert(int data) {
+        root = insertRec(root, data);
+        cout << "Element " << data << " inserted into the BST." << endl;
+    }
+    void remove(int data) {
+        if (root == nullptr) {
+            cout << "BST is empty. Cannot delete." << endl;
             return;
         }
 
-        inorderTraversal(node->left);
-        cout << node->data << " ";
-        inorderTraversal(node->right);
+        root = deleteNodeRec(root, data);
+        cout << "Element " << data << " deleted from the BST." << endl;
     }
 
-    void inorderTraversal() {
+    void inorder() {
         cout << "Inorder Traversal: ";
-        inorderTraversal(root);
+        inorderRec(root);
         cout << endl;
+    }
+
+    void preorder() {
+        cout << "Preorder Traversal: ";
+        preorderRec(root);
+        cout << endl;
+    }
+
+    void postorder() {
+        cout << "Postorder Traversal: ";
+        postorderRec(root);
+        cout << endl;
+    }
+    void displayMenu() {
+        cout << "\nMenu:\n";
+        cout << "1. Insert a node\n";
+        cout << "2. Delete a node\n";
+        cout << "3. Inorder Traversal\n";
+        cout << "4. Preorder Traversal\n";
+        cout << "5. Postorder Traversal\n";
+        cout << "6. Exit\n";
     }
 };
 
 int main() {
-    BST bst;
+    BinarySearchTree bst;
+    int choice, data;
 
-    cout << "Binary Search Tree (BST) Implementation" << endl;
-    cout << "Enter elements to insert into the BST (-1 to stop):" << endl;
+    do {
+        bst.displayMenu();
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    int value;
-    while (true) {
-        cout << "Enter value: ";
-        cin >> value;
-
-        if (value == -1) {
-            break;
+        switch (choice) {
+            case 1:
+                cout << "Enter the data to insert: ";
+                cin >> data;
+                bst.insert(data);
+                break;
+            case 2:
+                cout << "Enter the data to delete: ";
+                cin >> data;
+                bst.remove(data);
+                break;
+            case 3:
+                bst.inorder();
+                break;
+            case 4:
+                bst.preorder();
+                break;
+            case 5:
+                bst.postorder();
+                break;
+            case 6:
+                cout << "Exiting program." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please enter a valid option." << endl;
         }
-
-        bst.insert(value);
-    }
-
-    cout << "Enter element to delete from the BST: ";
-    cin >> value;
-
-    bst.remove(value);
-
-    cout << "Inorder Traversal after deletion:" << endl;
-    bst.inorderTraversal();
+    } while (choice != 6);
 
     return 0;
 }
